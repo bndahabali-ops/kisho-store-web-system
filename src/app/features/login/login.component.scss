@@ -1,0 +1,193 @@
+/* ============================================================
+   Agent 1 — Login Cinematic Stylesheet
+   Dark glassmorphism + animated orbs + premium feel
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Inter:wght@300;400;500;600&display=swap');
+
+:host { display: block; height: 100vh; }
+
+/* ── Page Wrapper ────────────────────────────────────────────── */
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at 20% 50%, #0d0d1a 0%, #05050f 100%);
+  position: relative;
+  overflow: hidden;
+  font-family: 'Cairo', sans-serif;
+  direction: rtl;
+}
+
+/* ── Animated Background Orbs ────────────────────────────────── */
+.login-bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  will-change: transform;
+}
+.orb-1 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.35) 0%, transparent 70%);
+  top: -10%; left: -10%;
+  animation: orbFloat1 12s ease-in-out infinite alternate;
+}
+.orb-2 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%);
+  bottom: -5%; right: -5%;
+  animation: orbFloat2 14s ease-in-out infinite alternate;
+}
+.orb-3 {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.2) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  animation: orbFloat3 10s ease-in-out infinite alternate;
+}
+@keyframes orbFloat1 { to { transform: translate(30px, 40px) scale(1.1); } }
+@keyframes orbFloat2 { to { transform: translate(-25px, -30px) scale(1.05); } }
+@keyframes orbFloat3 { to { transform: translate(-45%, -55%) scale(1.15); } }
+
+/* ── Glassmorphism Card ──────────────────────────────────────── */
+.login-card {
+  position: relative;
+  z-index: 10;
+  width: 420px;
+  max-width: 95vw;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 44px 40px;
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(139, 92, 246, 0.1) inset;
+}
+
+/* ── Brand ───────────────────────────────────────────────────── */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+.brand-icon {
+  width: 50px; height: 50px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.5);
+  flex-shrink: 0;
+}
+.brand-name {
+  font-size: 1.5rem; font-weight: 900;
+  background: linear-gradient(90deg, #c4b5fd, #818cf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0; letter-spacing: -0.5px;
+}
+.brand-sub {
+  font-size: 0.75rem; color: rgba(148, 163, 184, 0.8);
+  margin: 0; font-family: 'Inter', sans-serif;
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+
+/* ── Card Title ──────────────────────────────────────────────── */
+.card-title {
+  font-size: 1.6rem; font-weight: 700; color: #f1f5f9;
+  margin: 0 0 6px; letter-spacing: -0.3px;
+}
+.card-subtitle {
+  font-size: 0.9rem; color: #64748b; margin: 0 0 32px;
+}
+
+/* ── Form Fields ─────────────────────────────────────────────── */
+.form-field {
+  margin-bottom: 20px;
+}
+.form-field label {
+  display: block;
+  font-size: 0.85rem; font-weight: 600;
+  color: #94a3b8; margin-bottom: 8px;
+}
+.input-wrapper {
+  position: relative;
+  display: flex; align-items: center;
+}
+.input-icon {
+  position: absolute; right: 14px;
+  color: #4f46e5; pointer-events: none; flex-shrink: 0;
+}
+.input-wrapper input {
+  width: 100%; padding: 13px 44px 13px 44px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  color: #f1f5f9; font-size: 0.95rem;
+  font-family: 'Cairo', sans-serif;
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+  outline: none;
+}
+.input-wrapper input::placeholder { color: rgba(148, 163, 184, 0.4); }
+.input-wrapper input:focus {
+  border-color: #7c3aed;
+  background: rgba(124, 58, 237, 0.08);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+}
+.field-error .input-wrapper input {
+  border-color: rgba(239, 68, 68, 0.6);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+.error-msg {
+  display: block; font-size: 0.78rem;
+  color: #f87171; margin-top: 6px; padding-right: 4px;
+}
+.password-toggle {
+  position: absolute; left: 14px;
+  background: none; border: none; cursor: pointer;
+  color: #64748b; display: flex; align-items: center;
+  transition: color 0.2s;
+}
+.password-toggle:hover { color: #7c3aed; }
+
+/* ── Submit Button ───────────────────────────────────────────── */
+.btn-login {
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+  border: none; border-radius: 12px;
+  color: #fff; font-size: 1rem; font-weight: 700;
+  font-family: 'Cairo', sans-serif;
+  cursor: pointer; letter-spacing: 0.3px;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.45);
+  margin-top: 8px;
+}
+.btn-login:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(124, 58, 237, 0.6);
+}
+.btn-login:active:not(:disabled) { transform: translateY(0); }
+.btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ── Loading Spinner ─────────────────────────────────────────── */
+.spinner-text { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.spinner {
+  width: 18px; height: 18px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Footer ──────────────────────────────────────────────────── */
+.footer-note {
+  text-align: center; font-size: 0.75rem;
+  color: rgba(100, 116, 139, 0.6); margin-top: 28px; margin-bottom: 0;
+  font-family: 'Inter', sans-serif;
+}

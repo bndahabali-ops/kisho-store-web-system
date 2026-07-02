@@ -1,0 +1,826 @@
+/* ============================================================
+   KISHO Admin — Analytics & Financial Insights
+   Premium dark streetwear aesthetic:
+   ▸ Deep black / charcoal backgrounds
+   ▸ Neon accent glows (emerald green / amber / electric blue)
+   ▸ Glassmorphic card surfaces
+   ▸ Smooth transitions & micro-animations
+   ▸ Full skeleton loader system
+   ▸ 100% Fully Responsive & Fluid Layouts
+   ============================================================ */
+
+:host { display: block; width: 100%; }
+
+// ── Design tokens ─────────────────────────────────────────────────────────────
+$bg-card:         rgba(255, 255, 255, 0.035);
+$border-card:     rgba(255, 255, 255, 0.075);
+$border-hover:    rgba(255, 255, 255, 0.13);
+$text-primary:    #f1f5f9;
+$text-secondary:  #94a3b8;
+$text-muted:      #475569;
+
+$green:  #10b981;
+$amber:  #f59e0b;
+$blue:   #3b82f6;
+$purple: #8b5cf6;
+$cyan:   #06b6d4;
+$red:    #ef4444;
+$gray:   #6b7280;
+
+$emerald-glow:  rgba(16, 185, 129, 0.22);
+$amber-glow:    rgba(245, 158, 11, 0.22);
+$purple-glow:   rgba(139, 92, 246, 0.22);
+
+$radius-card: 20px;
+$radius-inner: 12px;
+
+// ── Shimmer animation ─────────────────────────────────────────────────────────
+@keyframes shimmer {
+  0%   { background-position: -400% 0; }
+  100% { background-position:  400% 0; }
+}
+@keyframes spin-anim {
+  to { transform: rotate(360deg); }
+}
+@keyframes pulse-ring {
+  0%   { transform: scale(1);   opacity: 0.6; }
+  100% { transform: scale(1.9); opacity: 0;   }
+}
+@keyframes bar-fill-in {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+// ── Skeleton base ─────────────────────────────────────────────────────────────
+%skeleton-base {
+  border-radius: 8px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.10) 50%,
+    rgba(255, 255, 255, 0.04) 75%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+.an-skel {
+  @extend %skeleton-base;
+
+  &--value       { height: 44px; }
+  &--sub         { height: 14px; }
+  &--line        { height: 18px; }
+  &--line-sm     { height: 13px; }
+  &--thumb       { width: 100px; height: 100px; border-radius: 16px; }
+  &--stat-box    { height: 70px; flex: 1; border-radius: 14px; }
+  &--total       { height: 40px; border-radius: 10px; }
+  &--dot-circle  { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  &--count       { width: 28px; height: 13px; }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  PANEL SHELL
+// ══════════════════════════════════════════════════════════════
+.an-panel {
+  margin-bottom: 2.5rem;
+  width: 100%;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  HEADER
+// ══════════════════════════════════════════════════════════════
+.an-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__icon-wrap {
+    position: relative;
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    border-radius: 13px;
+    background: linear-gradient(135deg, rgba($purple, 0.35), rgba($blue, 0.2));
+    border: 1px solid rgba($purple, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a78bfa;
+  }
+
+  &__pulse-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1.5px solid rgba($purple, 0.5);
+    animation: pulse-ring 2s ease-out infinite;
+
+    &--2 { animation-delay: 1s; }
+  }
+
+  &__title {
+    font-size: clamp(1.05rem, 3.5vw, 1.25rem);
+    font-weight: 900;
+    color: $text-primary;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  &__sub {
+    font-size: 0.76rem;
+    color: $text-muted;
+    margin: 3px 0 0;
+  }
+}
+
+// ── Refresh button ────────────────────────────────────────────────────────────
+.an-refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.6rem 1.25rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid $border-card;
+  border-radius: 10px;
+  color: $text-secondary;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
+  white-space: nowrap;
+  font-family: inherit;
+
+  &:hover:not(:disabled) {
+    background: rgba($purple, 0.12);
+    border-color: rgba($purple, 0.35);
+    color: #a78bfa;
+    box-shadow: 0 0 18px rgba($purple, 0.15);
+  }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.an-refresh-icon {
+  transition: transform 0.5s linear;
+  &.spin { animation: spin-anim 0.9s linear infinite; }
+}
+
+// ── Error banner ──────────────────────────────────────────────────────────────
+.an-error {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.85rem 1.15rem;
+  background: rgba($red, 0.08);
+  border: 1px solid rgba($red, 0.28);
+  border-radius: $radius-inner;
+  color: #f87171;
+  font-size: 0.87rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  FINANCIAL SUMMARY ROW — Top 3 Metric Cards
+// ══════════════════════════════════════════════════════════════
+.an-fin-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+// ── Base Financial Card ───────────────────────────────────────────────────────
+.an-fin-card {
+  position: relative;
+  overflow: hidden;
+  background: $bg-card;
+  border: 1px solid $border-card;
+  border-radius: $radius-card;
+  padding: 1.5rem 1.25rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 8.5rem;
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: $border-hover;
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4);
+  }
+
+  // ── Ambient glow blob ───────────────────────────────────────
+  &__glow {
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    filter: blur(70px);
+    pointer-events: none;
+    opacity: 0.18;
+    top: -70px;
+    right: -70px;
+    transition: opacity 0.3s;
+  }
+
+  &:hover &__glow { opacity: 0.3; }
+
+  &--green    &__glow { background: $green; }
+  &--amber    &__glow { background: $amber;  }
+  &--emerald  &__glow { background: #34d399; }
+
+  // ── Top row ────────────────────────────────────────────────
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    gap: 0.5rem;
+  }
+
+  &__label {
+    font-size: 0.70rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: $text-muted;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__badge {
+    display: inline-block;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2px 6px;
+    border-radius: 20px;
+    background: rgba($green, 0.15);
+    color: #6ee7b7;
+    border: 1px solid rgba($green, 0.2);
+  }
+
+  // ── Icon wraps ─────────────────────────────────────────────
+  &__icon-wrap {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &--green   { background: rgba($green,  0.14); color: #6ee7b7;  }
+    &--amber   { background: rgba($amber,  0.14); color: #fcd34d;  }
+    &--emerald { background: rgba(52, 211, 153, 0.14); color: #6ee7b7; }
+  }
+
+  // ── Amount ────────────────────────────────────────────────
+  &__amount {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  &__value {
+    font-size: clamp(1.8rem, 5.5vw, 2.4rem);
+    font-weight: 900;
+    color: $text-primary;
+    letter-spacing: -1px;
+    line-height: 1.1;
+  }
+
+  &__currency {
+    font-size: clamp(0.85rem, 2vw, 0.95rem);
+    font-weight: 800;
+    &--green   { color: $green; }
+    &--amber   { color: $amber; }
+    &--emerald { color: #34d399; }
+  }
+
+  // ── Meta row ──────────────────────────────────────────────
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    flex-wrap: wrap;
+
+    &--green   { color: $green; }
+    &--amber   { color: $amber; }
+    &--emerald { color: #34d399; }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  MAIN SPLIT SECTION
+// ══════════════════════════════════════════════════════════════
+.an-main-split {
+  display: grid;
+  grid-template-columns: 1.25fr 1.35fr;
+  gap: 1.25rem;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  LEFT — BEST SELLER CARD
+// ══════════════════════════════════════════════════════════════
+.an-bestseller {
+  position: relative;
+  overflow: hidden;
+  background: $bg-card;
+  border: 1px solid $border-card;
+  border-radius: $radius-card;
+  padding: 1.75rem 1.5rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: rgba($purple, 0.3);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4), 0 0 40px rgba($purple, 0.08);
+  }
+
+  // Decorative accent corner strip
+  &__accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 80px;
+    border-radius: 0 2px 2px 0;
+    background: linear-gradient(180deg, $amber, transparent);
+    opacity: 0.8;
+  }
+
+  // ── Header ────────────────────────────────────────────────
+  &__head {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 1.5rem;
+  }
+
+  &__crown {
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: linear-gradient(135deg, rgba($amber, 0.28), rgba(217, 119, 6, 0.15));
+    border: 1px solid rgba($amber, 0.28);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $amber;
+    flex-shrink: 0;
+    box-shadow: 0 0 18px rgba($amber, 0.18);
+  }
+
+  &__title {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: $text-primary;
+    letter-spacing: -0.2px;
+  }
+
+  &__sub {
+    font-size: 0.74rem;
+    color: $text-muted;
+    margin: 3px 0 0;
+  }
+
+  // ── Skeleton layout ───────────────────────────────────────
+  &__skeleton-wrap {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  &__skeleton-lines {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__stats-skeleton {
+    display: flex;
+    gap: 12px;
+    margin-top: 22px;
+  }
+
+  // ── Empty state ───────────────────────────────────────────
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 28px 0;
+    text-align: center;
+  }
+
+  &__empty-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px dashed $border-card;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text-muted;
+  }
+
+  &__empty-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: $text-secondary;
+    margin: 0;
+  }
+
+  &__empty-hint {
+    font-size: 0.78rem;
+    color: $text-muted;
+    margin: 0;
+    max-width: 220px;
+    line-height: 1.5;
+  }
+
+  // ── Product layout ────────────────────────────────────────
+  &__product {
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+
+    @media (max-width: 480px) {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 1rem;
+    }
+  }
+
+  &__thumb-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  &__thumb {
+    width: clamp(80px, 18vw, 100px);
+    height: clamp(80px, 18vw, 100px);
+    border-radius: 16px;
+    object-fit: cover;
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    display: block;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  &__thumb-fallback {
+    width: clamp(80px, 18vw, 100px);
+    height: clamp(80px, 18vw, 100px);
+    border-radius: 16px;
+    background: rgba($purple, 0.1);
+    border: 1.5px solid rgba($purple, 0.22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba($purple, 0.6);
+  }
+
+  &__rank {
+    position: absolute;
+    top: -9px;
+    right: -9px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, $amber, #d97706);
+    border: 2px solid #080810;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 0.02em;
+    box-shadow: 0 0 12px rgba($amber, 0.5);
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    @media (max-width: 480px) {
+      align-items: center;
+      width: 100%;
+    }
+  }
+
+  &__name {
+    display: block;
+    font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+    font-weight: 800;
+    color: $text-primary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    margin-bottom: 0.25rem;
+    @media (max-width: 480px) {
+      text-align: center;
+    }
+  }
+
+  &__cat {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    background: rgba($purple, 0.16);
+    color: #a78bfa;
+    padding: 2px 9px;
+    border-radius: 20px;
+    margin-bottom: 6px;
+    border: 1px solid rgba($purple, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__desc {
+    font-size: 0.82rem;
+    color: $text-secondary;
+    margin: 0;
+  }
+
+  &__old-price {
+    color: $text-muted;
+    font-weight: 400;
+    text-decoration: line-through;
+  }
+
+  // ── Metric tiles ──────────────────────────────────────────
+  &__metric-row {
+    display: flex;
+    gap: 1rem;
+    align-items: stretch;
+    flex-wrap: wrap;
+
+    @media (max-width: 380px) {
+      flex-direction: column;
+    }
+  }
+
+  &__metric {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 1.25rem 0.75rem;
+    border-radius: 14px;
+    text-align: center;
+    min-width: 120px;
+
+    &--units {
+      background: rgba($blue, 0.08);
+      border: 1px solid rgba($blue, 0.18);
+    }
+
+    &--revenue {
+      background: rgba($green, 0.08);
+      border: 1px solid rgba($green, 0.18);
+    }
+  }
+
+  &__metric-icon {
+    &--units   { color: #93c5fd; }
+    &--revenue { color: #6ee7b7; }
+    .an-bestseller__metric--units &   { color: #93c5fd; }
+    .an-bestseller__metric--revenue & { color: #6ee7b7; }
+  }
+
+  &__metric-value {
+    font-size: clamp(1.2rem, 3.5vw, 1.55rem);
+    font-weight: 900;
+    color: $text-primary;
+    letter-spacing: -0.8px;
+    line-height: 1.1;
+  }
+
+  &__metric-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: $text-muted;
+  }
+
+  &__metric-divider {
+    width: 1px;
+    background: $border-card;
+    align-self: stretch;
+
+    @media (max-width: 380px) {
+      display: none;
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  RIGHT — ORDER PIPELINE
+// ══════════════════════════════════════════════════════════════
+.an-pipeline {
+  position: relative;
+  overflow: hidden;
+  background: $bg-card;
+  border: 1px solid $border-card;
+  border-radius: $radius-card;
+  padding: 1.75rem 1.5rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: rgba($blue, 0.25);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4), 0 0 40px rgba($blue, 0.06);
+  }
+
+  // ── Header ────────────────────────────────────────────────
+  &__head {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 1.25rem;
+  }
+
+  &__icon-wrap {
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: rgba($blue, 0.14);
+    border: 1px solid rgba($blue, 0.22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #93c5fd;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: $text-primary;
+    letter-spacing: -0.2px;
+  }
+
+  &__sub {
+    font-size: 0.74rem;
+    color: $text-muted;
+    margin: 3px 0 0;
+  }
+
+  // ── Total hero ────────────────────────────────────────────
+  &__total {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 0.85rem 1.15rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid $border-card;
+    border-radius: 13px;
+    margin-bottom: 1.25rem;
+  }
+
+  &__total-val {
+    font-size: clamp(1.6rem, 5vw, 2rem);
+    font-weight: 900;
+    color: $text-primary;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  &__total-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: $text-muted;
+  }
+
+  // ── Status bar list ───────────────────────────────────────
+  &__bars {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  &__skel-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__row {
+    &:hover &__fill { filter: brightness(1.18); }
+  }
+
+  &__row-header {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 5px;
+    flex-wrap: wrap;
+  }
+
+  &__dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: box-shadow 0.3s;
+  }
+
+  &__status-icon {
+    font-size: 0.75rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  &__name {
+    flex: 1;
+    font-size: 0.79rem;
+    font-weight: 600;
+    color: $text-secondary;
+    min-width: 80px;
+  }
+
+  &__pct {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: $text-muted;
+    width: 34px;
+    text-align: right;
+  }
+
+  &__count {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: $text-primary;
+    width: 30px;
+    text-align: right;
+  }
+
+  &__track {
+    height: 5px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.055);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  &__fill {
+    height: 100%;
+    border-radius: 5px;
+    transform-origin: left;
+    animation: bar-fill-in 0.9s cubic-bezier(0.4, 0, 0.2, 1) both;
+    min-width: 3px;
+    transition: filter 0.2s;
+  }
+}

@@ -1,0 +1,195 @@
+<!-- category-management.component.html -->
+<div class="cat-mgmt">
+
+  <!-- ── Header ──────────────────────────────────────────────────────────── -->
+  <div class="cat-header">
+    <div>
+      <h2 class="cat-title">إدارة الأقسام</h2>
+      <p class="cat-sub">تحكم في أقسام المتجر وظهورها على الموقع</p>
+    </div>
+    <button class="btn-add-cat" (click)="openAddForm()" *ngIf="!showForm">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      إضافة قسم جديد
+    </button>
+  </div>
+
+  <!-- ── Add / Edit Form ─────────────────────────────────────────────────── -->
+  <div class="cat-form-card" *ngIf="showForm">
+    <div class="cat-form-header">
+      <h3>{{ editingId ? 'تعديل القسم' : 'إضافة قسم جديد' }}</h3>
+      <button class="btn-close-form" (click)="closeForm()" type="button" aria-label="إغلاق">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" novalidate class="cat-form-body">
+
+      <!-- Name -->
+      <div class="cat-fg" [class.cat-fg--error]="categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched">
+        <label for="cat-name">اسم القسم <span class="required">*</span></label>
+        <input
+          id="cat-name"
+          type="text"
+          formControlName="name"
+          placeholder="مثال: تيشيرتات، جاكيتات..."
+          autocomplete="off"
+        />
+        <span class="cat-err" *ngIf="categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched">
+          اسم القسم مطلوب (2–60 حرف)
+        </span>
+      </div>
+
+      <!-- Sort Order -->
+      <div class="cat-fg">
+        <label for="cat-sort">الترتيب على الموقع</label>
+        <input
+          id="cat-sort"
+          type="number"
+          formControlName="sortOrder"
+          min="0"
+          placeholder="0"
+        />
+      </div>
+
+      <!-- isVisible toggle -->
+      <div class="cat-fg cat-fg--full">
+        <label class="toggle-switch" for="cat-visible">
+          <input id="cat-visible" type="checkbox" formControlName="isVisible" />
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-label">
+            {{ categoryForm.get('isVisible')?.value ? 'ظاهر على الموقع' : 'مخفي عن الموقع' }}
+          </span>
+        </label>
+      </div>
+
+      <!-- Image upload -->
+      <div class="cat-fg cat-fg--full">
+        <label class="upload-zone-label">
+          صورة القسم
+          <span class="upload-hint">(JPG, PNG, WEBP — 5MB max)</span>
+        </label>
+
+        <!-- Preview -->
+        <div class="cat-img-preview" *ngIf="imagePreview">
+          <img [src]="imagePreview" alt="preview" />
+          <button type="button" class="cat-img-remove" (click)="removeSelectedImage()" aria-label="إزالة الصورة">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Dropzone (hidden when preview shown) -->
+        <label class="upload-dropzone" *ngIf="!imagePreview" [class.uploading]="isUploadingImage">
+          <input type="file" accept="image/jpeg,image/jpg,image/png,image/webp" (change)="onImageSelected($event)" hidden />
+          <div class="dropzone-inner">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5">
+              <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
+              <path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/>
+            </svg>
+            <span *ngIf="!isUploadingImage">اضغط لرفع صورة القسم</span>
+            <span *ngIf="isUploadingImage" class="uploading-text">
+              <span class="spinner"></span> جاري الرفع...
+            </span>
+          </div>
+        </label>
+      </div>
+
+      <!-- Actions -->
+      <div class="cat-form-actions">
+        <button type="button" class="btn-cancel" (click)="closeForm()">إلغاء</button>
+        <button type="submit" class="btn-save" [disabled]="isSubmitting || isUploadingImage">
+          <span *ngIf="!isSubmitting && !isUploadingImage">
+            {{ editingId ? 'حفظ التعديلات' : 'إضافة القسم' }} ✓
+          </span>
+          <span *ngIf="isSubmitting || isUploadingImage" class="spinner-row">
+            <span class="spinner"></span>
+            {{ isUploadingImage ? 'جاري الرفع...' : 'جاري الحفظ...' }}
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ── Loading skeleton ─────────────────────────────────────────────────── -->
+  <div class="loading-rows" *ngIf="isLoading">
+    <div class="skeleton-row" *ngFor="let s of [1,2,3]"></div>
+  </div>
+
+  <!-- ── Empty state ──────────────────────────────────────────────────────── -->
+  <div class="cat-empty" *ngIf="!isLoading && categories.length === 0">
+    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" opacity="0.25">
+      <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+      <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+    </svg>
+    <p>لا توجد أقسام بعد</p>
+    <button class="btn-add-cat" (click)="openAddForm()">أضف أول قسم</button>
+  </div>
+
+  <!-- ── Categories Grid ──────────────────────────────────────────────────── -->
+  <div class="cat-grid" *ngIf="!isLoading && categories.length > 0">
+    <div
+      class="cat-card"
+      *ngFor="let cat of categories; trackBy: trackById"
+      [class.cat-card--hidden]="!cat.isVisible"
+    >
+      <!-- Image -->
+      <div class="cat-card-img">
+        <img *ngIf="cat.image" [src]="cat.image" [alt]="cat.name" loading="lazy" />
+        <div class="cat-card-img-placeholder" *ngIf="!cat.image">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+        </div>
+        <!-- Visibility badge -->
+        <span class="vis-badge" [class.vis-badge--hidden]="!cat.isVisible">
+          {{ cat.isVisible ? 'ظاهر' : 'مخفي' }}
+        </span>
+      </div>
+
+      <!-- Info -->
+      <div class="cat-card-info">
+        <div class="cat-card-name">{{ cat.name }}</div>
+        <div class="cat-card-slug">{{ cat.slug }}</div>
+      </div>
+
+      <!-- Actions row -->
+      <div class="cat-card-actions">
+        <!-- Live visibility toggle -->
+        <label class="toggle-switch toggle-switch--sm" [title]="cat.isVisible ? 'إخفاء عن الموقع' : 'إظهار على الموقع'">
+          <input
+            type="checkbox"
+            [checked]="cat.isVisible"
+            (change)="toggleVisibility(cat)"
+            [id]="'vis-toggle-' + cat._id"
+          />
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-label">{{ cat.isVisible ? 'ظاهر' : 'مخفي' }}</span>
+        </label>
+
+        <!-- Edit -->
+        <button class="btn-action btn-action--edit" (click)="openEditForm(cat)" title="تعديل">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+        </button>
+
+        <!-- Delete -->
+        <button class="btn-action btn-action--delete" (click)="confirmDelete(cat)" title="حذف">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+            <path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

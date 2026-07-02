@@ -1,0 +1,740 @@
+<!-- ============================================================
+   Agent 1 — Dashboard Template: Sidebar + Stats + Product Table + Multi-step Form
+   ============================================================ -->
+<div class="dash-shell">
+
+    <!-- ══ SIDEBAR ════════════════════════════════════════════════════════ -->
+    <aside class="sidebar" #sidebar>
+        <div class="sidebar-brand">
+            <div class="brand-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <path d="M16 10a4 4 0 01-8 0" />
+                </svg>
+            </div>
+            <span class="brand-label">KishoStore</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a class="nav-item" [class.active]="currentView === 'products'" (click)="changeView('products')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
+                </svg>
+                المنتجات
+            </a>
+            <a class="nav-item" [class.active]="currentView === 'orders'" (click)="changeView('orders')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                الطلبات
+            </a>
+            <a class="nav-item" [class.active]="currentView === 'categories'" (click)="changeView('categories')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                    <polyline points="2 17 12 22 22 17" />
+                    <polyline points="2 12 12 17 22 12" />
+                </svg>
+                الأقسام
+            </a>
+            <a class="nav-item" [class.active]="currentView === 'analytics'" (click)="changeView('analytics')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10" />
+                    <line x1="12" y1="20" x2="12" y2="4" />
+                    <line x1="6" y1="20" x2="6" y2="14" />
+                </svg>
+                الإحصائيات
+            </a>
+            <a class="nav-item" (click)="openAddForm()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                إضافة منتج
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="admin-card" *ngIf="admin">
+                <div class="admin-avatar">{{ admin.name.charAt(0) }}</div>
+                <div class="admin-info">
+                    <span class="admin-name">{{ admin.name }}</span>
+                    <span class="admin-role">مدير النظام</span>
+                </div>
+            </div>
+            <button class="btn-logout" (click)="logout()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                تسجيل الخروج
+            </button>
+        </div>
+    </aside>
+
+    <!-- ══ MAIN CONTENT ════════════════════════════════════════════════════ -->
+    <main class="dash-main">
+
+        <!-- Top Bar -->
+        <header class="dash-topbar">
+            <div>
+                <h2 class="page-title">لوحة التحكم</h2>
+                <p class="page-sub">إدارة متجر كيشو بالكامل</p>
+            </div>
+            <button class="btn-add-product" (click)="openAddForm()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                إضافة منتج جديد
+            </button>
+        </header>
+
+        <!-- Stats Row -->
+        <div class="stats-row" *ngIf="currentView === 'products'">
+            <div class="dash-stat-card">
+                <div class="stat-icon stat-purple">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="stat-value">{{ totalProducts }}</div>
+                    <div class="stat-label">إجمالي المنتجات</div>
+                </div>
+            </div>
+            <div class="dash-stat-card">
+                <div class="stat-icon stat-green">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                        <polyline points="17 6 23 6 23 12" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="stat-value">{{ products | activeCount }}</div>
+                    <div class="stat-label">منتجات فعّالة</div>
+                </div>
+            </div>
+            <div class="dash-stat-card">
+                <div class="stat-icon stat-blue">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="1" y="3" width="15" height="13" />
+                        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+                        <circle cx="5.5" cy="18.5" r="2.5" />
+                        <circle cx="18.5" cy="18.5" r="2.5" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="stat-value">{{ totalPages }}</div>
+                    <div class="stat-label">صفحات البيانات</div>
+                </div>
+            </div>
+            <div class="dash-stat-card">
+                <div class="stat-icon stat-orange">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 00-3-3.87" />
+                        <path d="M16 3.13a4 4 0 010 7.75" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="stat-value">{{ admin?.name || '—' }}</div>
+                    <div class="stat-label">المدير المسجّل</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Stats Row -->
+        <div class="stats-row" *ngIf="currentView === 'orders'">
+            <div class="dash-stat-card">
+                <div class="stat-icon stat-purple">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                </div>
+                <div>
+                    <div class="stat-value">{{ ordersTotal }}</div>
+                    <div class="stat-label">إجمالي الطلبات</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ ADD / EDIT FORM ══════════════════════════════════════════════ -->
+        <section class="product-form-section" *ngIf="showAddForm">
+            <div class="form-card">
+                <!-- Form Header -->
+                <div class="form-card-header">
+                    <h3>{{ editingProductId ? 'تعديل المنتج' : 'إضافة منتج جديد' }}</h3>
+                    <button class="btn-close-form" (click)="closeForm()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Step Indicator -->
+                <div class="step-indicator">
+                    <div class="step-item" [class.active]="currentStep >= 1" [class.done]="currentStep > 1">
+                        <div class="step-num">1</div><span>المعلومات الأساسية</span>
+                    </div>
+                    <div class="step-line" [class.filled]="currentStep > 1"></div>
+                    <div class="step-item" [class.active]="currentStep >= 2" [class.done]="currentStep > 2">
+                        <div class="step-num">2</div><span>الألوان والصور</span>
+                    </div>
+                    <div class="step-line" [class.filled]="currentStep > 2"></div>
+                    <div class="step-item" [class.active]="currentStep >= 3">
+                        <div class="step-num">3</div><span>المقاسات والمخزن</span>
+                    </div>
+                </div>
+
+                <form [formGroup]="productForm" (ngSubmit)="onSubmit()" novalidate>
+
+                    <!-- ── STEP 1: Basic Info ─────────────────────────────────── -->
+                    <div class="step-content" *ngIf="currentStep === 1">
+                        <div class="form-grid">
+                            <div class="fg" [class.fg-error]="ctrl('title').invalid && ctrl('title').touched">
+                                <label>اسم المنتج *</label>
+                                <input formControlName="title" placeholder="مثال: تيشيرت أوفر سايز" />
+                                <span class="err" *ngIf="ctrl('title').invalid && ctrl('title').touched">اسم المنتج
+                                    مطلوب (3 أحرف على الأقل)</span>
+                            </div>
+                            <div class="fg" [class.fg-error]="ctrl('category').invalid && ctrl('category').touched">
+                                <label>القسم *</label>
+                                <select formControlName="category">
+                                    <option value="" disabled>اختر القسم</option>
+                                    <option *ngFor="let cat of CATEGORIES" [value]="cat">{{ cat }}</option>
+                                </select>
+                                <span class="err" *ngIf="ctrl('category').invalid && ctrl('category').touched">القسم
+                                    مطلوب</span>
+                            </div>
+                            <div class="fg fg-full"
+                                [class.fg-error]="ctrl('description').invalid && ctrl('description').touched">
+                                <label>وصف المنتج *</label>
+                                <textarea formControlName="description" rows="3"
+                                    placeholder="وصف تفصيلي للمنتج..."></textarea>
+                                <span class="err"
+                                    *ngIf="ctrl('description').invalid && ctrl('description').touched">الوصف
+                                    مطلوب</span>
+                            </div>
+                            <div class="fg" [class.fg-error]="ctrl('basePrice').invalid && ctrl('basePrice').touched">
+                                <label>السعر الأساسي (ج.م) *</label>
+                                <input type="number" formControlName="basePrice" placeholder="299" min="0" />
+                                <span class="err" *ngIf="ctrl('basePrice').invalid && ctrl('basePrice').touched">السعر
+                                    مطلوب ويجب أن يكون أكبر من صفر</span>
+                            </div>
+                            <div class="fg">
+                                <label>سعر الخصم (ج.م)</label>
+                                <input type="number" formControlName="discountPrice" placeholder="0" min="0" />
+                            </div>
+                            <div class="fg fg-switch">
+                                <label>حالة المنتج</label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" formControlName="isActive" />
+                                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                                    <span class="toggle-label">{{ ctrl('isActive').value ? 'فعّال' : 'موقوف' }}</span>
+                                </label>
+                            </div>
+                            <div class="fg fg-switch">
+                                <label>وصل حديثاً (New Arrival)</label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" formControlName="isNewArrival" />
+                                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                                    <span class="toggle-label">{{ ctrl('isNewArrival').value ? 'نعم' : 'لا' }}</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button type="button" class="btn-next" (click)="nextStep()">التالي: الألوان والصور
+                                ←</button>
+                        </div>
+                    </div>
+
+                    <!-- ── STEP 2: Colors & Images ────────────────────────────── -->
+                    <div class="step-content" *ngIf="currentStep === 2">
+                        <div formArrayName="colors">
+                            <div class="color-entry" *ngFor="let clr of colorsArray.controls; let i = index"
+                                [formGroupName]="i">
+                                <div class="entry-header">
+                                    <span class="entry-badge">لون {{ i + 1 }}</span>
+                                    <button type="button" class="btn-remove-entry" (click)="removeColor(i)"
+                                        *ngIf="colorsArray.length > 1">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <polyline points="3 6 5 6 21 6" />
+                                            <path d="M19 6l-1 14H6L5 6" />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <!-- Color name -->
+                                <div class="fg"
+                                    [class.fg-error]="colorCtrl(i,'name').invalid && colorCtrl(i,'name').touched"
+                                    style="margin-bottom:14px">
+                                    <label>اسم اللون *</label>
+                                    <input formControlName="name" placeholder="مثال: Wine Red" />
+                                    <span class="err"
+                                        *ngIf="colorCtrl(i,'name').invalid && colorCtrl(i,'name').touched">اسم اللون
+                                        مطلوب</span>
+                                </div>
+
+                                <!-- Image Upload Zone -->
+                                <div class="upload-zone-label">صور هذا اللون * <span class="upload-hint">(JPG, PNG, WEBP
+                                        — 5MB max)</span></div>
+                                <label class="upload-dropzone" [class.uploading]="colorState(i).uploading">
+                                    <input type="file" multiple accept="image/jpeg,image/png,image/webp"
+                                        (change)="onFilesSelected($event, i)" hidden />
+                                    <div class="dropzone-inner">
+                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="1.5" opacity="0.5">
+                                            <polyline points="16 16 12 12 8 16" />
+                                            <line x1="12" y1="12" x2="12" y2="21" />
+                                            <path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3" />
+                                        </svg>
+                                        <span *ngIf="!colorState(i).uploading">اضغط لرفع الصور</span>
+                                        <span *ngIf="colorState(i).uploading" class="uploading-text">
+                                            <span class="spinner"></span> جاري الرفع على Cloudinary...
+                                        </span>
+                                    </div>
+                                </label>
+
+                                <!-- Image Previews -->
+                                <div class="image-preview-grid" *ngIf="colorState(i).previews.length > 0">
+                                    <div class="preview-item" *ngFor="let url of colorState(i).previews; let j = index">
+                                        <img [src]="url" alt="preview" loading="lazy" />
+                                        <button type="button" class="preview-remove" (click)="removePreview(i, j)"
+                                            title="إزالة">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="3">
+                                                <line x1="18" y1="6" x2="6" y2="18" />
+                                                <line x1="6" y1="6" x2="18" y2="18" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <button type="button" class="btn-add-entry" (click)="addColor()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                            إضافة لون آخر
+                        </button>
+                        <div class="step-actions">
+                            <button type="button" class="btn-prev" (click)="prevStep()">→ السابق</button>
+                            <button type="button" class="btn-next" (click)="nextStep()">التالي: المقاسات ←</button>
+                        </div>
+                    </div>
+
+                    <!-- ── STEP 3: Variants ───────────────────────────────────── -->
+                    <div class="step-content" *ngIf="currentStep === 3">
+                        <div formArrayName="variants">
+                            <div class="variant-entry" *ngFor="let vrt of variantsArray.controls; let i = index"
+                                [formGroupName]="i">
+                                <div class="entry-header">
+                                    <span class="entry-badge">Variant {{ i + 1 }}</span>
+                                    <button type="button" class="btn-remove-entry" (click)="removeVariant(i)"
+                                        *ngIf="variantsArray.length > 1">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <polyline points="3 6 5 6 21 6" />
+                                            <path d="M19 6l-1 14H6L5 6" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="form-grid form-grid-3">
+                                    <div class="fg"
+                                        [class.fg-error]="variantCtrl(i,'color').invalid && variantCtrl(i,'color').touched">
+                                        <label>اللون *</label>
+                                        <input formControlName="color" placeholder="Wine Red" />
+                                        <span class="err"
+                                            *ngIf="variantCtrl(i,'color').invalid && variantCtrl(i,'color').touched">اللون
+                                            مطلوب</span>
+                                    </div>
+                                    <div class="fg">
+                                        <label>المقاس *</label>
+                                        <select formControlName="size">
+                                            <option *ngFor="let s of SIZES" [value]="s">{{ s }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="fg"
+                                        [class.fg-error]="variantCtrl(i,'stock').invalid && variantCtrl(i,'stock').touched">
+                                        <label>المخزن *</label>
+                                        <input type="number" formControlName="stock" placeholder="0" min="0" />
+                                        <span class="err"
+                                            *ngIf="variantCtrl(i,'stock').invalid && variantCtrl(i,'stock').touched">الكمية
+                                            مطلوبة</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-add-entry" (click)="addVariant()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                            إضافة Variant آخر
+                        </button>
+                        <div class="step-actions">
+                            <button type="button" class="btn-prev" (click)="prevStep()">→ السابق</button>
+                            <button type="submit" class="btn-submit" [disabled]="isSubmitting || isAnyUploading()"
+                                [class.loading]="isSubmitting">
+                                <span *ngIf="!isSubmitting">{{ editingProductId ? 'حفظ التعديلات' : 'إنشاء المنتج' }}
+                                    ✓</span>
+                                <span *ngIf="isSubmitting" class="spinner-row"><span class="spinner"></span> جاري الرفع
+                                    والحفظ...</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </section>
+
+        <!-- ══ FILTER BAR ════════════════════════════════════════════════════ -->
+        <div class="filter-bar" *ngIf="currentView === 'products'">
+
+            <!-- Search -->
+            <div class="filter-field filter-search">
+                <svg class="filter-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input id="filter-search" type="text" placeholder="بحث باسم المنتج..." [value]="searchTerm"
+                    (input)="onSearchInput($any($event.target).value)" class="filter-input" />
+            </div>
+
+            <!-- Category -->
+            <div class="filter-field">
+                <svg class="filter-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <line x1="8" y1="6" x2="21" y2="6" />
+                    <line x1="8" y1="12" x2="21" y2="12" />
+                    <line x1="8" y1="18" x2="21" y2="18" />
+                    <line x1="3" y1="6" x2="3.01" y2="6" />
+                    <line x1="3" y1="12" x2="3.01" y2="12" />
+                    <line x1="3" y1="18" x2="3.01" y2="18" />
+                </svg>
+                <select id="filter-category" [(ngModel)]="filterCategory" (change)="onFilterChange()"
+                    class="filter-input">
+                    <option value="">جميع الأقسام</option>
+                    <option *ngFor="let cat of CATEGORIES" [value]="cat">{{ cat }}</option>
+                </select>
+            </div>
+
+            <!-- Price Range -->
+            <div class="filter-field filter-price-group">
+                <svg class="filter-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <line x1="12" y1="1" x2="12" y2="23" />
+                    <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+                </svg>
+                <input id="filter-min" type="number" min="0" placeholder="سعر من" [(ngModel)]="filterMinPrice"
+                    (change)="onFilterChange()" class="filter-input filter-price-input" />
+                <span class="price-sep">—</span>
+                <input id="filter-max" type="number" min="0" placeholder="سعر لغاية" [(ngModel)]="filterMaxPrice"
+                    (change)="onFilterChange()" class="filter-input filter-price-input" />
+            </div>
+
+            <!-- Clear -->
+            <button class="btn-clear-filters" *ngIf="hasActiveFilters" (click)="clearFilters()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+                مسح الفلاتر
+            </button>
+        </div>
+
+        <!-- ══ PRODUCTS TABLE ═══════════════════════════════════════════════ -->
+        <section class="products-table-wrapper" *ngIf="currentView === 'products'">
+            <div class="table-header">
+                <h3>قائمة المنتجات</h3>
+                <span class="table-count">{{ totalProducts }} منتج</span>
+            </div>
+
+            <!-- Loading Skeleton -->
+            <div class="loading-rows" *ngIf="isLoadingProducts">
+                <div class="skeleton-row" *ngFor="let s of [1,2,3,4]"></div>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" *ngIf="!isLoadingProducts && products.length === 0">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                    opacity="0.3">
+                    <path
+                        d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
+                </svg>
+                <p>لا توجد منتجات بعد</p>
+                <button class="btn-add-product" (click)="openAddForm()">أضف أول منتج</button>
+            </div>
+
+            <!-- Table -->
+            <div class="table-scroll" *ngIf="!isLoadingProducts && products.length > 0">
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>المنتج</th>
+                            <th>القسم</th>
+                            <th>السعر</th>
+                            <th>الألوان</th>
+                            <th>إجمالي المخزن</th>
+                            <th>الحالة</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="product-row" [class.product-row--inactive]="!p.isActive" *ngFor="let p of products">
+                            <td>
+                                <div class="product-title-cell">
+                                    <div class="product-thumb" *ngIf="thumbUrl(p)">
+                                        <img [src]="thumbUrl(p)" [alt]="p.title" loading="lazy" />
+                                    </div>
+                                    <div class="product-thumb product-thumb-placeholder" *ngIf="!thumbUrl(p)">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <rect x="3" y="3" width="18" height="18" rx="2" />
+                                            <circle cx="8.5" cy="8.5" r="1.5" />
+                                            <polyline points="21 15 16 10 5 21" />
+                                        </svg>
+                                    </div>
+                                    <span class="product-name">{{ p.title }}</span>
+                                </div>
+                            </td>
+                            <td><span class="cat-badge">{{ getCategoryName(p.category) }}</span></td>
+                            <td>
+                                <div class="price-cell">
+                                    <span class="price-base">{{ p.basePrice | number }} ج.م</span>
+                                    <span class="price-discount" *ngIf="p.discountPrice > 0">{{ p.discountPrice | number
+                                        }} ج.م</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="color-dots">
+                                    <span class="color-dot" *ngFor="let c of p.options.colors" [title]="c.name">{{
+                                        c.name.charAt(0) }}</span>
+                                </div>
+                            </td>
+                            <td><span class="stock-badge" [class.stock-low]="totalStock(p) < 10">{{ totalStock(p)
+                                    }}</span></td>
+                            <td>
+                                <div class="status-cell">
+                                    <label class="toggle-switch sm">
+                                        <input type="checkbox" [checked]="p.isActive" (change)="toggleActive(p)" />
+                                        <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                                    </label>
+                                    <span class="status-badge" [class.status-active]="p.isActive"
+                                        [class.status-inactive]="!p.isActive">
+                                        {{ p.isActive ? 'فعّال' : 'موقوف' }}
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="btn-action btn-edit" (click)="editProduct(p)" title="تعديل">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                                            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                        </svg>
+                                    </button>
+                                    <button class="btn-action btn-delete" (click)="confirmDelete(p._id)" title="حذف">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <polyline points="3 6 5 6 21 6" />
+                                            <path d="M19 6l-1 14H6L5 6" />
+                                            <path d="M10 11v6M14 11v6" />
+                                            <path d="M9 6V4h6v2" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" *ngIf="totalPages > 1">
+                <button class="pg-btn" [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">→</button>
+                <button class="pg-btn" *ngFor="let n of pageNumbers" [class.active]="n === currentPage"
+                    (click)="changePage(n)">{{ n }}</button>
+                <button class="pg-btn" [disabled]="currentPage === totalPages"
+                    (click)="changePage(currentPage + 1)">←</button>
+            </div>
+        </section>
+
+        <!-- ══ ORDERS TABLE ═══════════════════════════════════════════════ -->
+        <div class="filter-bar" *ngIf="currentView === 'orders'">
+            <!-- Search Order -->
+            <div class="filter-field filter-search">
+                <svg class="filter-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input id="order-search" type="text" placeholder="بحث برقم الأوردر أو موبايل العميل..." [value]="orderSearchTerm"
+                    (input)="onOrderSearchInput($any($event.target).value)" class="filter-input" />
+            </div>
+
+            <!-- Status Filter -->
+            <div class="filter-field">
+                <svg class="filter-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <line x1="8" y1="6" x2="21" y2="6" />
+                    <line x1="8" y1="12" x2="21" y2="12" />
+                    <line x1="8" y1="18" x2="21" y2="18" />
+                    <line x1="3" y1="6" x2="3.01" y2="6" />
+                    <line x1="3" y1="12" x2="3.01" y2="12" />
+                    <line x1="3" y1="18" x2="3.01" y2="18" />
+                </svg>
+                <select id="filter-order-status" [(ngModel)]="filterOrderStatus" (change)="onOrderStatusFilterChange()"
+                    class="filter-input">
+                    <option value="">جميع الحالات</option>
+                    <option value="pending">في الانتظار (Pending)</option>
+                    <option value="confirmed">تم التأكيد (Confirmed)</option>
+                    <option value="shipped">تم الشحن (Shipped)</option>
+                    <option value="delivered">تم التوصيل (Delivered)</option>
+                    <option value="cancelled">ملغي (Cancelled)</option>
+                </select>
+            </div>
+        </div>
+
+        <section class="orders-table-wrapper" *ngIf="currentView === 'orders'">
+            <div class="table-header">
+                <h3>قائمة الطلبات</h3>
+                <span class="table-count">{{ ordersTotal }} طلب</span>
+            </div>
+
+            <!-- Loading Skeleton -->
+            <div class="loading-rows" *ngIf="isLoadingOrders">
+                <div class="skeleton-row" *ngFor="let s of [1,2,3,4]"></div>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" *ngIf="!isLoadingOrders && orders.length === 0">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                    opacity="0.3">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                </svg>
+                <p *ngIf="!orderSearchTerm">لا توجد طلبات بعد</p>
+                <p *ngIf="orderSearchTerm">لا توجد طلبات تطابق رقم الأوردر أو الهاتف المدخل</p>
+            </div>
+
+            <!-- Table -->
+            <div class="table-scroll" *ngIf="!isLoadingOrders && orders.length > 0">
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>رقم الطلب</th>
+                            <th>العميل</th>
+                            <th>المنتجات</th>
+                            <th>الإجمالي</th>
+                            <th>التاريخ</th>
+                            <th>حالة الطلب</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="product-row order-row" *ngFor="let order of orders">
+                            <td data-label="رقم الطلب">
+                                <span class="order-ref-badge">{{ order.orderRef }}</span>
+                            </td>
+                            <td data-label="العميل">
+                                <div class="customer-info">
+                                    <span class="customer-name">{{ order.shippingAddress.fullName }}</span>
+                                    <span class="customer-phone" dir="ltr">{{ order.shippingAddress.phone }}</span>
+                                </div>
+                            </td>
+                            <td data-label="المنتجات">
+                                <div class="order-items-summary">
+                                    <span class="order-item-badge" *ngFor="let item of order.items">
+                                        <span class="item-qty">{{ item.quantity }}x</span> {{ item.title }}
+                                        <span class="item-meta">({{ item.color }}, {{ item.size }})</span>
+                                    </span>
+                                </div>
+                            </td>
+                            <td data-label="الإجمالي">
+                                <span class="order-total-price">{{ order.totalAmount | number }} ج.م</span>
+                            </td>
+                            <td data-label="التاريخ">
+                                <span class="order-date-cell">{{ order.createdAt | date:'short' }}</span>
+                            </td>
+                            <td data-label="حالة الطلب">
+                                <div class="status-cell">
+                                    <select class="status-select" [ngClass]="'status-' + order.status"
+                                        [ngModel]="order.status" (ngModelChange)="updateOrderStatus(order, $event)">
+                                        <option value="pending">في الانتظار</option>
+                                        <option value="confirmed">تم التأكيد</option>
+                                        <option value="shipped">تم الشحن</option>
+                                        <option value="delivered">تم التوصيل</option>
+                                        <option value="cancelled">ملغي</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" *ngIf="ordersTotalPages > 1">
+                <button class="pg-btn" [disabled]="ordersCurrentPage === 1"
+                    (click)="changeOrderPage(ordersCurrentPage - 1)">→</button>
+                <button class="pg-btn" *ngFor="let n of orderPageNumbers" [class.active]="n === ordersCurrentPage"
+                    (click)="changeOrderPage(n)">{{ n }}</button>
+                <button class="pg-btn" [disabled]="ordersCurrentPage === ordersTotalPages"
+                    (click)="changeOrderPage(ordersCurrentPage + 1)">←</button>
+            </div>
+        </section>
+
+        <!-- ══ ANALYTICS VIEW ═══════════════════════════════════════════════ -->
+        <div class="analytics-view-wrapper" *ngIf="currentView === 'analytics'">
+            <app-order-analytics></app-order-analytics>
+        </div>
+
+        <!-- ══ CATEGORY VIEW ════════════════════════════════════════════════ -->
+        <div class="category-view-wrapper" *ngIf="currentView === 'categories'">
+            <app-category-management></app-category-management>
+        </div>
+
+    </main>
+</div>
+
+<!-- ══ DELETE CONFIRMATION MODAL ══════════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="deletingProductId" (click)="cancelDelete()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+        <div class="modal-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+        </div>
+        <h4>هل أنت متأكد من الحذف؟</h4>
+        <p>لا يمكن التراجع عن هذه العملية بعد الحذف</p>
+        <div class="modal-actions">
+            <button class="btn-cancel-modal" (click)="cancelDelete()">إلغاء</button>
+            <button class="btn-confirm-delete" (click)="deleteProduct()">نعم، احذف</button>
+        </div>
+    </div>
+</div>
