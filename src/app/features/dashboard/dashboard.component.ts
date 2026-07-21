@@ -66,6 +66,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   productForm!: FormGroup;
 
+  // ── Size Chart File State ──────────────────────────────────────────────────────
+  sizeChartFile: File | null = null;
+  sizeChartPreview = '';
+  sizeChartUploading = false;
+
   // ── Per-color image state ─────────────────────────────────────────────────────
   // Index = color index; value = { files: File[], previews: string[], uploadedUrls: string[] }
   colorImageState: Array<{ files: File[]; previews: string[]; uploadedUrls: string[]; uploading: boolean }> = [];
@@ -162,6 +167,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       category: ['', Validators.required],
       isActive: [true],
       isNewArrival: [false],
+      sizeChartImage: [''],
       colors: this.fb.array([this.buildColorGroup()]),
       variants: this.fb.array([this.buildVariantGroup()]),
     });
@@ -229,6 +235,27 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     state.uploadedUrls.splice(imgIndex, 1);
   }
 
+  onSizeChartSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    this.sizeChartFile = input.files[0];
+    if (this.sizeChartPreview && this.sizeChartPreview.startsWith('blob:')) {
+      URL.revokeObjectURL(this.sizeChartPreview);
+    }
+    this.sizeChartPreview = URL.createObjectURL(this.sizeChartFile);
+    input.value = '';
+  }
+
+  removeSizeChart(): void {
+    if (this.sizeChartPreview && this.sizeChartPreview.startsWith('blob:')) {
+      URL.revokeObjectURL(this.sizeChartPreview);
+    }
+    this.sizeChartFile = null;
+    this.sizeChartPreview = '';
+    this.productForm.patchValue({ sizeChartImage: '' });
+  }
+
   // ── Upload all pending images for a colour, returns Cloudinary URLs ───────────
   private uploadColorImages(colorIndex: number): Promise<string[]> {
     const state = this.colorImageState[colorIndex];
@@ -288,14 +315,32 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.isSubmitting = true;
-
     try {
-      // 1. Upload all images in parallel
+      const raw = this.productForm.value;
+
+      // 1. Upload size chart image if selected
+      let sizeChartUrl = raw.sizeChartImage || '';
+      if (this.sizeChartFile) {
+        this.sizeChartUploading = true;
+        try {
+          const res = await this.uploadSvc.uploadImages([this.sizeChartFile]).toPromise();
+          if (res && res.urls && res.urls.length > 0) {
+            sizeChartUrl = res.urls[0];
+          }
+        } catch (err) {
+          this.sizeChartUploading = false;
+          this.toast.error('فشل رفع صورة جدول المقاسات');
+          this.isSubmitting = false;
+          return;
+        }
+        this.sizeChartUploading = false;
+      }
+
+      // 2. Upload color images in parallel
       const urlsPerColor = await Promise.all(
         this.colorImageState.map((_, i) => this.uploadColorImages(i))
       );
 
-      const raw = this.productForm.value;
       const colorControls = this.colorsArray.controls as FormGroup[];
 
       const payload = {
@@ -309,6 +354,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         })(),
         isActive: raw.isActive,
         isNewArrival: raw.isNewArrival,
+        sizeChartImage: sizeChartUrl,
         options: {
           colors: colorControls.map((ctrl, i) => ({
             name: ctrl.get('name')!.value,
@@ -393,8 +439,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.productForm.patchValue({
       title: p.title, description: p.description, basePrice: p.basePrice,
       discountPrice: p.discountPrice, category: this.getCategoryName(p.category), isActive: p.isActive,
-      isNewArrival: p.isNewArrival,
+      isNewArrival: p.isNewArrival, sizeChartImage: p.sizeChartImage || '',
     });
+    this.sizeChartFile = null;
+    this.sizeChartPreview = p.sizeChartImage || '';
 
     this.colorsArray.clear();
     this.colorImageState = [];
@@ -443,6 +491,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   closeForm(): void {
     // Revoke object URLs to avoid memory leaks
     this.colorImageState.forEach(s => s.previews.forEach(url => { if (url.startsWith('blob:')) URL.revokeObjectURL(url); }));
+    if (this.sizeChartPreview && this.sizeChartPreview.startsWith('blob:')) {
+      URL.revokeObjectURL(this.sizeChartPreview);
+    }
+    this.sizeChartFile = null;
+    this.sizeChartPreview = '';
     this.showAddForm = false; this.editingProductId = null; this.currentStep = 1;
   }
   logout(): void { this.authSvc.logout(); }

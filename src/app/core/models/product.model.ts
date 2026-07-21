@@ -31,6 +31,7 @@ export interface Product {
   variants: Variant[];
   isActive: boolean;
   isNewArrival: boolean;
+  sizeChartImage?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -63,4 +64,5 @@ export interface CreateProductPayload {
   variants: Variant[];
   isActive?: boolean;
   isNewArrival?: boolean;
+  sizeChartImage?: string;
 }
